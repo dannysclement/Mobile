@@ -15,6 +15,31 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+let lastOnlineCheck = Date.now();
+const logoutTimeout = 10 * 60 * 1000; // 10 minutes
+
+// Check if user is online or offline
+function checkNetworkStatus() {
+    if (!navigator.onLine) {
+        document.getElementById("offlineMessage").style.display = "block";
+        setTimeout(() => {
+            window.location.href = "account.html";
+        }, 3000);
+    }
+}
+
+// Auto logout if offline for 10 minutes
+setInterval(() => {
+    if (!navigator.onLine) {
+        if (Date.now() - lastOnlineCheck > logoutTimeout) {
+            alert("You have been logged out due to inactivity.");
+            window.location.href = "index.html";
+        }
+    } else {
+        lastOnlineCheck = Date.now();
+    }
+}, 60000); // Check every minute
+
 document.getElementById("loginForm").addEventListener("submit", async function(event) {
     event.preventDefault();
 
@@ -38,7 +63,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
                 const currentDate = new Date();
 
                 if (currentDate > expiryDate) {
-                    errorMessage.textContent = "Your login code has expired. Please renew by clicking 'Need Help'.";
+                    errorMessage.innerHTML = "Your login code has expired. <br> Please <a href='https://wa.me/2348116788630?text=I%20need%20help%20with%20your%20petroleum%20calculator' style='color: blue;'>renew by clicking here</a>.";
                     return;
                 }
             }
@@ -46,10 +71,13 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
             alert("Login successful!");
             window.location.href = "account.html"; // Redirect to account page
         } else {
-            errorMessage.textContent = "Invalid login code or PIN.";
+            errorMessage.innerHTML = "Incorrect login code or PIN. <br> If you forgot, <a href='https://wa.me/2348116788630?text=I%20need%20help%20with%20my%20login' style='color: blue;'>click here for help</a>.";
         }
     } catch (error) {
         errorMessage.textContent = "Please programmer update the code.";
         console.error("Error logging in:", error);
     }
 });
+
+// Run network check when the page loads
+window.addEventListener("load", checkNetworkStatus);
