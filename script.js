@@ -1,19 +1,18 @@
 <script type="module">
-  // Import Firebase SDK modules
+  // Import the functions you need from the SDKs you need
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
   import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
   import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
-  // Firebase configuration
+  // Your web app's Firebase configuration
   const firebaseConfig = {
-    apiKey: "AIzaSyBw_hJdW_4QIBajA5LJ78Wu1a0bTyyThI8",
-    authDomain: "techzone-c96c0.firebaseapp.com",
-    databaseURL: "https://techzone-c96c0-default-rtdb.firebaseio.com",
-    projectId: "techzone-c96c0",
-    storageBucket: "techzone-c96c0.firebasestorage.app",
-    messagingSenderId: "399698120752",
-    appId: "1:399698120752:web:40821d2140cd0d860a1df5",
-    measurementId: "G-Z7VFYH20LH"
+    apiKey: "AIzaSyA1dzpeYvPixn7y3yPx-h6M031QLXJFXBc",
+    authDomain: "vbankmfv.firebaseapp.com",
+    projectId: "vbankmfv",
+    storageBucket: "vbankmfv.firebasestorage.app",
+    messagingSenderId: "920021461554",
+    appId: "1:920021461554:web:93e1f0ed565c78a04c2a2b",
+    measurementId: "G-G37D2FP82T"
   };
 
   // Initialize Firebase
@@ -46,7 +45,6 @@
     }
   }, 60000); // Check every minute
 
-  // Login form submission
   document.getElementById("loginForm").addEventListener("submit", async function(event) {
     event.preventDefault();
 
@@ -55,7 +53,7 @@
     let errorMessage = document.getElementById("errorMessage");
 
     try {
-      // Query Firestore for login credentials
+      // Query Firestore to find the user
       const q = query(
         collection(db, "users"),
         where("loginCode", "==", loginCode),
@@ -90,6 +88,6 @@
     }
   });
 
-  // Run network check on page load
+  // Run network check when the page loads
   window.addEventListener("load", checkNetworkStatus);
 </script>
