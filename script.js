@@ -1,5 +1,5 @@
 <script type="module">
-  // Import Firebase SDKs
+  // Import the Firebase SDKs you need
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
   import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
   import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
@@ -20,61 +20,32 @@
   const analytics = getAnalytics(app);
   const db = getFirestore(app);
 
-  // Voice function (lady voice)
-  function speak(message) {
-    const synth = window.speechSynthesis;
-    const utterance = new SpeechSynthesisUtterance(message);
-    const voices = synth.getVoices().filter(v =>
-      v.name.toLowerCase().includes("female") ||
-      v.name.toLowerCase().includes("woman") ||
-      v.name.toLowerCase().includes("google") ||
-      v.name.toLowerCase().includes("samantha")
-    );
-    if (voices.length > 0) {
-      utterance.voice = voices[0];
-    }
-    utterance.pitch = 1;
-    utterance.rate = 1;
-    synth.speak(utterance);
-  }
+  let lastOnlineCheck = Date.now();
+  const logoutTimeout = 10 * 60 * 1000; // 10 minutes
 
-  // Auto greeting on page load
-  function greetUser() {
-    const greeting = "Greetings, you're welcome to Danny S Clement mobi Calculator.";
-    speak(greeting);
-  }
-
-  // Offline check
+  // Check if user is online or offline
   function checkNetworkStatus() {
     if (!navigator.onLine) {
-      const message = "You are offline. Redirecting you to your account page.";
       document.getElementById("offlineMessage").style.display = "block";
-      speak(message);
       setTimeout(() => {
         window.location.href = "account.html";
       }, 3000);
     }
   }
 
-  // Auto logout if offline for too long
-  let lastOnlineCheck = Date.now();
-  const logoutTimeout = 10 * 60 * 1000; // 10 minutes
-
+  // Auto logout if offline for 10 minutes
   setInterval(() => {
     if (!navigator.onLine) {
       if (Date.now() - lastOnlineCheck > logoutTimeout) {
-        const msg = "You have been logged out due to inactivity.";
-        alert(msg);
-        speak(msg);
+        alert("You have been logged out due to inactivity.");
         window.location.href = "index.html";
       }
     } else {
       lastOnlineCheck = Date.now();
     }
-  }, 60000); // Every 60s
+  }, 60000); // Check every minute
 
-  // Login form submit handler
-  document.getElementById("loginForm").addEventListener("submit", async function (event) {
+  document.getElementById("loginForm").addEventListener("submit", async function(event) {
     event.preventDefault();
 
     let loginCode = document.getElementById("loginCode").value;
@@ -82,6 +53,7 @@
     let errorMessage = document.getElementById("errorMessage");
 
     try {
+      // Query Firestore to find the user
       const q = query(
         collection(db, "users"),
         where("loginCode", "==", loginCode),
@@ -100,36 +72,22 @@
           const currentDate = new Date();
 
           if (currentDate > expiryDate) {
-            const msg = "Your login code has expired. Please renew by clicking the WhatsApp link.";
             errorMessage.innerHTML = "Your login code has expired. <br> Please <a href='https://wa.me/2348116788630?text=I%20need%20help%20with%20your%20petroleum%20calculator' style='color: blue;'>renew by clicking here</a>.";
-            speak(msg);
             return;
           }
         }
 
-        const successMsg = "Login successful. Redirecting to your account.";
-        alert(successMsg);
-        speak(successMsg);
-        window.location.href = "account.html";
+        alert("Login successful!");
+        window.location.href = "account.html"; // Redirect to account page
       } else {
-        const failMsg = "Incorrect login code or pin. Please try again or contact support.";
         errorMessage.innerHTML = "Incorrect login code or PIN. <br> If you forgot, <a href='https://wa.me/2348116788630?text=I%20need%20help%20with%20my%20login' style='color: blue;'>click here for help</a>.";
-        speak(failMsg);
       }
     } catch (error) {
-      const msg = "There was an error. Please contact the programmer to update the code.";
-      errorMessage.textContent = msg;
-      speak(msg);
+      errorMessage.textContent = "Please programmer update the code.";
       console.error("Error logging in:", error);
     }
   });
 
-  // Run greeting and offline check on load
-  window.addEventListener("load", () => {
-    // Wait for voices to load
-    window.speechSynthesis.onvoiceschanged = () => {
-      greetUser();
-    };
-    checkNetworkStatus();
-  });
+  // Run network check when the page loads
+  window.addEventListener("load", checkNetworkStatus);
 </script>
