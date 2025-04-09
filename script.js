@@ -1,18 +1,19 @@
 <script type="module">
-  // Import the Firebase SDKs you need
+  // Import Firebase SDK modules
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
   import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
   import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
   // Firebase configuration
   const firebaseConfig = {
-    apiKey: "AIzaSyA8fClsCgQphHEGa1eLFZVp-_FtRpl5TqM",
-    authDomain: "poised-eye-447618-q9.firebaseapp.com",
-    projectId: "poised-eye-447618-q9",
-    storageBucket: "poised-eye-447618-q9.firebasestorage.app",
-    messagingSenderId: "952211645345",
-    appId: "1:952211645345:web:5af6041c9291a3c0a2a1e0",
-    measurementId: "G-CEW2Q9YLW8"
+    apiKey: "AIzaSyBw_hJdW_4QIBajA5LJ78Wu1a0bTyyThI8",
+    authDomain: "techzone-c96c0.firebaseapp.com",
+    databaseURL: "https://techzone-c96c0-default-rtdb.firebaseio.com",
+    projectId: "techzone-c96c0",
+    storageBucket: "techzone-c96c0.firebasestorage.app",
+    messagingSenderId: "399698120752",
+    appId: "1:399698120752:web:40821d2140cd0d860a1df5",
+    measurementId: "G-Z7VFYH20LH"
   };
 
   // Initialize Firebase
@@ -45,6 +46,7 @@
     }
   }, 60000); // Check every minute
 
+  // Login form submission
   document.getElementById("loginForm").addEventListener("submit", async function(event) {
     event.preventDefault();
 
@@ -53,7 +55,7 @@
     let errorMessage = document.getElementById("errorMessage");
 
     try {
-      // Query Firestore to find the user
+      // Query Firestore for login credentials
       const q = query(
         collection(db, "users"),
         where("loginCode", "==", loginCode),
@@ -88,6 +90,6 @@
     }
   });
 
-  // Run network check when the page loads
+  // Run network check on page load
   window.addEventListener("load", checkNetworkStatus);
 </script>
